@@ -164,7 +164,21 @@ const SITE = {
       sticky:  true,
       weights: {}
     },
-    native:   { enabled: true },
+    /* ---- NATIVE — batas ukuran ----
+       Tinggi native banner ditentukan jaringan iklan, jadi di sini kamu hanya
+       bisa membatasi kotaknya (satuan px, 0 = tanpa batas).
+       maxWidth        : lebar maksimal di desktop. Rekomendasi 728.
+       maxWidthMobile  : lebar maksimal di HP. Biasanya biarkan 0 (selebar layar).
+       maxHeight       : tinggi maksimal di desktop. Biasanya biarkan 0.
+       maxHeightMobile : tinggi maksimal di HP. Kalau iklan terlalu tinggi, coba 300.
+                         Catatan: iklan yang lebih tinggi dari batas ini akan TERPOTONG. */
+    native: {
+      enabled: true,
+      maxWidth: 728,
+      maxWidthMobile: 0,
+      maxHeight: 0,
+      maxHeightMobile: 0
+    },
     social:   { enabled: true },
     popunder: { enabled: false },
 
@@ -1189,6 +1203,16 @@ bannerMQ.addEventListener("change", renderBanner);   // HP diputar → pilih ula
     return;
   }
   activeAds.add("native");
+  const nc = SITE.ads.native;
+  const fitNative = () => {                       // batas ukuran dari SITE.ads.native
+    const mob = bannerMQ.matches;
+    const mw = Number(mob ? nc.maxWidthMobile : nc.maxWidth) || 0;
+    const mh = Number(mob ? nc.maxHeightMobile : nc.maxHeight) || 0;
+    slot.style.maxWidth  = mw ? mw + "px" : "";
+    slot.style.maxHeight = mh ? mh + "px" : "";
+  };
+  fitNative();
+  bannerMQ.addEventListener("change", fitNative);
   whenLoaded(() => injectCode(slot, code, "native banner"));
 })();
 
