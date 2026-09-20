@@ -15,10 +15,13 @@
    ?adpreview=1 (lihat posisi slot iklan), ?ads=banner,native (pilih tipe iklan).
    Ubah teks di dalam tanda kutip "...". Jangan hapus koma (,) di akhir baris.
    ========================================================================== */
+const TUJUAN = "https://direc-86o.pages.dev/";   // tujuan SEMENTARA semua tombol — ganti alamat ini nanti
+
 const SITE = {
 
   /* ---------- 1. IDENTITAS ---------- */
   name:    "tess",
+  logoHref: TUJUAN,          // tujuan saat logo diklik (tab yang sama)
   tagline: "Watch featured videos and live streams in one place.",
   year:    2026,
 
@@ -85,16 +88,16 @@ const SITE = {
      article = (ganti href) buka artikel popup, isi dengan kunci dari bagian ARTIKEL di bawah
      newTab  = true → buka di tab baru                                          */
   nav: [
-    { label: "Watch",       href: "#tonton" },
-    { label: "More videos", href: "#video-lain" },
-    { label: "About",       article: "tentang" }
+    { label: "Watch",       href: TUJUAN },
+    { label: "More videos", href: TUJUAN },
+    { label: "About",       href: TUJUAN }
   ],
 
   /* ---------- 4. TOMBOL DI KANAN ATAS ----------
      style = "outline" (garis) atau "solid" (berwarna)                          */
   buttons: [
-    { label: "Log in",  href: "#", style: "outline", newTab: false },
-    { label: "Sign up", href: "#", style: "solid",   newTab: false }
+    { label: "Log in",  href: TUJUAN, style: "outline", newTab: false },
+    { label: "Sign up", href: TUJUAN, style: "solid",   newTab: false }
   ],
 
   /* ---------- 5. ANIMASI LOADING & POPUP "WATCH" ---------- */
@@ -107,7 +110,7 @@ const SITE = {
   watch: {
     title:  "Watch your video",   // tulisan di popup
     button: "Watch Now",          // tulisan di tombol popup
-    newTab: true                  // true = link terbuka di tab baru
+    newTab: false                  // true = tab baru | false = tab yang sama
     // Tujuan tombol diatur lewat "link" di bagian VIDEO UTAMA di bawah.
   },
 
@@ -249,7 +252,7 @@ const SITE = {
     title:   "Sample 24/7 live stream",
     channel: "Channel Name",
     desc:    "Replace this text with the description of your first video.",
-    link:    ""
+    link:    TUJUAN
   },
 
   /* ---------- 9. MORE VIDEOS — 4 KOTAK GAMBAR YANG BISA DIKLIK ----------
@@ -270,10 +273,10 @@ const SITE = {
   more: {
     title: "More videos",
     items: [
-      { image: "", url: "", newTab: true, title: "Sample video number one",   channel: "Channel Name", live: false },
-      { image: "", url: "", newTab: true, title: "Sample video number two",   channel: "Channel Name", live: false },
-      { image: "", url: "", newTab: true, title: "Sample video number three", channel: "Channel Name", live: false },
-      { image: "", url: "", newTab: true, title: "Sample video number four",  channel: "Channel Name", live: false }
+      { image: "", url: TUJUAN, newTab: false, title: "Sample video number one",   channel: "Channel Name", live: false },
+      { image: "", url: TUJUAN, newTab: false, title: "Sample video number two",   channel: "Channel Name", live: false },
+      { image: "", url: TUJUAN, newTab: false, title: "Sample video number three", channel: "Channel Name", live: false },
+      { image: "", url: TUJUAN, newTab: false, title: "Sample video number four",  channel: "Channel Name", live: false }
     ]
   },
 
@@ -920,6 +923,7 @@ let raf = 0;
 /* ---------- Header: nama, menu, tombol ---------- */
 document.title = SITE.name;
 $("#logoText").textContent = SITE.name;
+$(".logo").setAttribute("href", SITE.logoHref || "#");
 
 function linkAttrs(item) {
   if (item.article) return `href="#" data-article="${esc(item.article)}"`;
