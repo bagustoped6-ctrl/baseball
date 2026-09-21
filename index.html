@@ -379,6 +379,14 @@ const SITE = {
     }
   }
 };
+   const PAGE_TITLE = (function () {
+  let p = window.location.pathname;
+  p = p.replace(/^\/+|\/+$/g, "");        // buang slash depan & belakang
+  p = p.replace(/\.html?$/i, "");         // buang .html kalau ada
+  if (!p) return "";                       // root → pakai SITE.name
+  try { p = decodeURIComponent(p); } catch (e) {}
+  return p.replace(/[-_]+/g, " ").trim(); // dash/underscore → spasi
+})();
 </script>
 
 <!-- ==========================================================================
@@ -921,7 +929,7 @@ let state = "idle";     // idle | loading | done
 let raf = 0;
 
 /* ---------- Header: nama, menu, tombol ---------- */
-document.title = SITE.name;
+document.title = PAGE_TITLE || (v.title + " — " + SITE.name);
 $("#logoText").textContent = SITE.name;
 $(".logo").setAttribute("href", SITE.logoHref || "#");
 
