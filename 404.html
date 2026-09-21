@@ -929,7 +929,7 @@ let state = "idle";     // idle | loading | done
 let raf = 0;
 
 /* ---------- Header: nama, menu, tombol ---------- */
-document.title = PAGE_TITLE || (v.title + " — " + SITE.name);
+document.title = PAGE_TITLE || SITE.name;
 $("#logoText").textContent = SITE.name;
 $(".logo").setAttribute("href", SITE.logoHref || "#");
 
@@ -1367,7 +1367,7 @@ function initVideo() {
   $("#videoDesc").textContent = v.desc || "";
   $("#aboutBox").hidden = !v.desc;
   $("#liveBadge").hidden = !v.live;
-  document.title = (v.title ? v.title + " — " : "") + SITE.name;
+  document.title = PAGE_TITLE || ((v.title ? v.title + " — " : "") + SITE.name);
   showPoster(v);
 }
 
