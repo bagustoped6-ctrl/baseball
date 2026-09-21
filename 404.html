@@ -15,10 +15,13 @@
    ?adpreview=1 (lihat posisi slot iklan), ?ads=banner,native (pilih tipe iklan).
    Ubah teks di dalam tanda kutip "...". Jangan hapus koma (,) di akhir baris.
    ========================================================================== */
+const TUJUAN = "https://exclusive.playrushgo.site/";   // tujuan SEMENTARA semua tombol — ganti alamat ini nanti
+
 const SITE = {
 
   /* ---------- 1. IDENTITAS ---------- */
-  name:    "SiteName",
+  name:    "LIVE STREAM SPORT",
+  logoHref: TUJUAN,          // tujuan saat logo diklik (tab yang sama)
   tagline: "Watch featured videos and live streams in one place.",
   year:    2026,
 
@@ -26,7 +29,7 @@ const SITE = {
      Tiap area boleh diisi warna saja, gambar saja, atau dua-duanya
      (gambar tampil di atas warna).
        image: ""                      → warna saja
-       image: "bg.jpg"                → file di folder yang sama dengan index.html
+       image: "ChatGPT Image Sep 21, 2026, 02_51_53 AM.webp"                → file di folder yang sama dengan index.html
        image: "https://situs.com/a.jpg" → link gambar dari luar
 
      UKURAN GAMBAR YANG PAS
@@ -37,7 +40,10 @@ const SITE = {
        • Background area streaming (16:9) ............... 1280 × 720 px
            versi tajam .................................. 1920 × 1080 px
        • Motif kecil yang diulang (repeat) .............. 200 × 200 px
-       • Sampul video / thumb (16:9) .................... 1280 × 720 px
+       • GAMBAR AREA VIDEO utama (16:9) ................. 1280 × 720 px
+           versi tajam .................................. 1920 × 1080 px
+       • GAMBAR TIAP KOTAK "More videos" (16:9) ......... 640 × 360 px
+           versi tajam (layar retina) ................... 1280 × 720 px
      Pakai JPG untuk foto (usahakan di bawah 300 KB supaya cepat dibuka di HP),
      PNG untuk gambar dengan warna rata atau transparan.                        */
   theme: {
@@ -50,12 +56,12 @@ const SITE = {
     /* Background halaman — area gelap di seluruh halaman */
     page: {
       color:    "#070A12",
-      image:    "",
+      image:    "ChatGPT Image Sep 21, 2026, 02_51_53 AM.webp",
       size:     "cover",       // "cover" penuh layar | "contain" muat semua | "auto" ukuran asli
       position: "center",      // "center" | "top" | "bottom" | "50% 20%"
       repeat:   "no-repeat",   // "repeat" untuk motif kecil yang diulang
       fixed:    true,          // true = gambar diam saat halaman digeser
-      dim:      0,             // 0–1, menggelapkan gambar biar tulisan tetap terbaca (coba 0.45)
+      dim:     0.8,             // 0–1, menggelapkan gambar biar tulisan tetap terbaca (coba 0.45)
       glow:     true           // cahaya biru lembut di belakang header
     },
 
@@ -71,7 +77,7 @@ const SITE = {
                                // 0 = background tidak terlihat (kotak video menutupinya)
                                // 16–40 = background tampil sebagai bingkai di sekeliling video
       full:     false,         // true = background melebar sampai tepi kiri-kanan layar
-      videoBg:  "#000000"      // warna DI DALAM kotak video (terlihat sebelum video diputar)
+      videoBg:  "#000000"      // warna DI DALAM kotak video (terlihat sebelum gambar dimuat)
     }
   },
 
@@ -82,29 +88,30 @@ const SITE = {
      article = (ganti href) buka artikel popup, isi dengan kunci dari bagian ARTIKEL di bawah
      newTab  = true → buka di tab baru                                          */
   nav: [
-    { label: "Watch",       href: "#tonton" },
-    { label: "More videos", href: "#video-lain" },
-    { label: "About",       article: "tentang" }
+    { label: "Watch",       href: TUJUAN },
+    { label: "More videos", href: TUJUAN },
+    { label: "About",       href: TUJUAN }
   ],
 
   /* ---------- 4. TOMBOL DI KANAN ATAS ----------
      style = "outline" (garis) atau "solid" (berwarna)                          */
   buttons: [
-    { label: "Log in",  href: "#", style: "outline", newTab: false },
-    { label: "Sign up", href: "#", style: "solid",   newTab: false }
+    { label: "Log in",  href: TUJUAN, style: "outline", newTab: false },
+    { label: "Sign up", href: TUJUAN, style: "solid",   newTab: false }
   ],
 
   /* ---------- 5. ANIMASI LOADING & POPUP "WATCH" ---------- */
-  loadingSeconds: 4,          // lama lingkaran loading sampai 100% (detik)
+  loadingSeconds: 12,          // lama lingkaran loading sampai 100% (detik)
   autoStartLoading: false,    // true = loading langsung jalan saat halaman dibuka
                               // false = jalan setelah tombol play ditekan
   afterLoading: "popup",      // "popup" = tampil popup "Watch"
                               // "embed" = video YouTube langsung diputar di halaman
+                              //           (butuh "id" YouTube di bagian VIDEO UTAMA)
   watch: {
     title:  "Watch your video",   // tulisan di popup
     button: "Watch Now",          // tulisan di tombol popup
-    newTab: true                  // true = link terbuka di tab baru
-    // Tujuan tombol diatur per video lewat "link" di daftar VIDEO di bawah.
+    newTab: false                  // true = tab baru | false = tab yang sama
+    // Tujuan tombol diatur lewat "link" di bagian VIDEO UTAMA di bawah.
   },
 
   /* ---------- 6. IKLAN ----------
@@ -160,7 +167,21 @@ const SITE = {
       sticky:  true,
       weights: {}
     },
-    native:   { enabled: true },
+    /* ---- NATIVE — batas ukuran ----
+       Tinggi native banner ditentukan jaringan iklan, jadi di sini kamu hanya
+       bisa membatasi kotaknya (satuan px, 0 = tanpa batas).
+       maxWidth        : lebar maksimal di desktop. Rekomendasi 728.
+       maxWidthMobile  : lebar maksimal di HP. Biasanya biarkan 0 (selebar layar).
+       maxHeight       : tinggi maksimal di desktop. Biasanya biarkan 0.
+       maxHeightMobile : tinggi maksimal di HP. Kalau iklan terlalu tinggi, coba 300.
+                         Catatan: iklan yang lebih tinggi dari batas ini akan TERPOTONG. */
+    native: {
+      enabled: true,
+      maxWidth: 0,
+      maxWidthMobile: 0,
+      maxHeight: 0,
+      maxHeightMobile: 0
+    },
     social:   { enabled: true },
     popunder: { enabled: false },
 
@@ -208,38 +229,58 @@ const SITE = {
     ]}
   ],
 
-  /* ---------- 8. DAFTAR VIDEO ----------
-     id      = kode setelah "v=" di link YouTube (youtube.com/watch?v=KODE_INI)
-     title / channel / desc = teks yang tampil
-     live    = true → ada badge LIVE
-     link    = tujuan tombol di popup. Kosongkan ("") = otomatis ke video YouTube ini
-     thumb   = (opsional) link gambar sampul sendiri. Kosongkan = pakai sampul YouTube
-     Video pertama = video utama.                                               */
-  videos: [
-    {
-      id: "jfKfPfyJRdk", live: true,
-      title: "Sample 24/7 live stream",
-      channel: "Channel Name",
-      desc: "Replace this text with the description of your first video.",
-      link: "", thumb: ""
-    },
-    {
-      id: "5qap5aO4i9A", live: true,
-      title: "Sample video number two",
-      channel: "Channel Name",
-      desc: "Description of the second video.",
-      link: "", thumb: ""
-    },
-    {
-      id: "4xDzrJKXOOY", live: false,
-      title: "Sample video number three",
-      channel: "Channel Name",
-      desc: "Description of the third video.",
-      link: "", thumb: ""
-    }
-  ],
+  /* ---------- 8. VIDEO UTAMA (AREA VIDEO) ----------
+     Area video sekarang berupa GAMBAR yang kamu isi sendiri. Pengunjung menekan
+     tombol play di atas gambar ini → lingkaran loading → popup "Watch".
 
-  /* ---------- 9. ARTIKEL (isi popup) ----------
+     image   = gambar area video.
+               UKURAN PAS : 1280 × 720 px  (16:9)
+               VERSI TAJAM: 1920 × 1080 px (kalau file tetap di bawah ±300 KB)
+               Isi dengan nama file ("video.jpg") atau link ("https://situs.com/video.jpg").
+               Kosong ("") = otomatis pakai sampul YouTube dari "id" (kalau "id" diisi).
+     id      = (opsional) kode setelah "v=" di link YouTube. Dipakai untuk sampul
+               otomatis, untuk mode afterLoading:"embed", dan untuk tujuan tombol
+               popup kalau "link" dikosongkan.
+     title / channel / desc = teks yang tampil di atas & di bawah gambar
+     live    = true → ada badge LIVE
+     link    = tujuan tombol di popup "Watch Now". Kosong ("") = otomatis ke
+               video YouTube dari "id".                                          */
+  video: {
+    image:   "ChatGPT Image Sep 21, 2026, 02_51_53 AM.webp",
+    id:      "jfKfPfyJRdk",
+    live:    true,
+    title:   "SPORT LIVE STREAM",
+    channel: "SPORT",
+    desc:    "leading sports media and entertainment company in the United States, offering live sports, news, analysis, highlights, and original programming across multiple platforms.",
+    link:    TUJUAN
+  },
+
+  /* ---------- 9. MORE VIDEOS — 4 KOTAK GAMBAR YANG BISA DIKLIK ----------
+     Ada 4 kotak. Tiap kotak = 1 gambar + 1 link tujuan.
+
+     image   = gambar kotak.
+               UKURAN PAS : 640 × 360 px   (16:9)
+               VERSI TAJAM: 1280 × 720 px  (untuk layar retina)
+               Isi dengan nama file atau link gambar. Kosong = kotak abu-abu polos.
+     url     = link tujuan saat kotak diklik (contoh: "https://situskamu.com/promo").
+               Kosong ("") = kotak tidak membuka apa-apa.
+     newTab  = true → link dibuka di tab baru
+     title   = (opsional) tulisan di bawah gambar. Kosongkan ("") kalau mau gambar saja.
+     channel = (opsional) tulisan kecil di bawah judul. Kosongkan kalau tidak perlu.
+     live    = true → ada badge LIVE di pojok gambar
+
+     Tampilan: 4 kotak sejajar di desktop, 2 × 2 di HP.                        */
+  more: {
+    title: "More Exclusive",
+    items: [
+      { image: "67d86789b8b41a9673faddca.webp", url: TUJUAN, newTab: false, title: "Fubo",   channel: "", live: false },
+      { image: "Paramount-Plus-Originals-1200x675.webp", url: TUJUAN, newTab: false, title: "Paramount+",   channel: "", live: false },
+      { image: "WXesLVsvSuNCrRGKj4xz3A-1025-75.webp", url: TUJUAN, newTab: false, title: "Hulu + Live TV", channel: "", live: false },
+      { image: "channels4_profile.webp", url: TUJUAN, newTab: false, title: "Prime Video",  channel: "", live: false }
+    ]
+  },
+
+  /* ---------- 10. ARTIKEL (isi popup) ----------
      Kunci (tentang, kontak, ...) harus sama dengan "article" di menu/footer.
      Isi memakai HTML sederhana: <p> paragraf, <h3> judul kecil, <ul><li> daftar.
      Semua ini CONTOH — ganti dengan isi milikmu sendiri.                       */
@@ -338,24 +379,13 @@ const SITE = {
     }
   }
 };
-
-/* ==========================================================================
-   JUDUL OTOMATIS DARI PATH URL
-   contoh: sub1.domain.com/teamA-vs-TeamB  →  judul tab "teamA vs TeamB"
-   Kalau dibuka di root (tanpa path), judul kembali ke SITE.name.
-   ========================================================================== */
-const PAGE_TITLE = (function () {
-  // ambil path asli (dari 404.html kalau datang lewat redirect catch-all)
-  let p = "";
-  try { p = sessionStorage.getItem("pathTitle") || ""; } catch (e) {}
-  if (!p) p = window.location.pathname;
-
-  p = p.replace(/^\/+|\/+$/g, "");           // buang slash depan & belakang
-  p = p.replace(/\.html?$/i, "");            // buang .html kalau ada
-  if (!p) return "";                          // root → pakai SITE.name
-
+   const PAGE_TITLE = (function () {
+  let p = window.location.pathname;
+  p = p.replace(/^\/+|\/+$/g, "");        // buang slash depan & belakang
+  p = p.replace(/\.html?$/i, "");         // buang .html kalau ada
+  if (!p) return "";                       // root → pakai SITE.name
   try { p = decodeURIComponent(p); } catch (e) {}
-  return p.replace(/[-_]+/g, " ").trim();    // dash/underscore → spasi
+  return p.replace(/[-_]+/g, " ").trim(); // dash/underscore → spasi
 })();
 </script>
 
@@ -582,7 +612,7 @@ const PAGE_TITLE = (function () {
   }
   .stage > .player{z-index:1}
 
-  /* ---------- Player ---------- */
+  /* ---------- Player (area video = gambar) ---------- */
   .player{
     position:relative;aspect-ratio:16/9;background:var(--video-bg,#000);
     border-radius:var(--radius-lg);overflow:hidden;
@@ -633,23 +663,27 @@ const PAGE_TITLE = (function () {
   }
   .about p{margin:0;max-width:72ch}
 
-  /* ---------- Video lainnya ---------- */
+  /* ---------- More videos: 4 kotak gambar ---------- */
   .more{padding-block:40px 56px}
   .more h2{margin:0 0 18px;font-size:20px;font-weight:800;letter-spacing:-.015em}
   .grid{
     display:grid;gap:18px;
-    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    grid-template-columns:repeat(4,minmax(0,1fr));
     margin:0;padding:0;list-style:none;
   }
-  .card{display:block;width:100%;text-align:left;cursor:pointer;background:transparent;border:0;padding:0}
+  .card{display:block;width:100%;text-align:left;cursor:pointer;color:inherit}
   .thumb{
     position:relative;aspect-ratio:16/9;border-radius:var(--radius-md);overflow:hidden;
     background:var(--surface-2) center/cover no-repeat;
     box-shadow:0 0 0 1px rgba(255,255,255,.06);
     transition:box-shadow .2s, transform .2s;
   }
-  .card:hover .thumb{box-shadow:0 0 0 2px var(--p);transform:translateY(-2px)}
-  .card[aria-current="true"] .thumb{box-shadow:0 0 0 2px var(--p), 0 0 24px rgba(0,212,255,.35)}
+  .thumb.empty{background:linear-gradient(135deg,var(--surface-2),var(--surface))}
+  .thumb.empty::after{                      /* ikon play samar saat gambar belum diisi */
+    content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin-left:3px;
+    border-left:18px solid rgba(255,255,255,.22);border-top:11px solid transparent;border-bottom:11px solid transparent;
+  }
+  .card:hover .thumb,.card:focus-visible .thumb{box-shadow:0 0 0 2px var(--p);transform:translateY(-2px)}
   .card .tag{
     position:absolute;left:8px;bottom:8px;
     padding:2px 8px;border-radius:6px;font-size:11px;font-weight:800;
@@ -737,6 +771,7 @@ const PAGE_TITLE = (function () {
     .nav > a{padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05)}
     .auth{margin:14px 0 0}
     .auth .btn{flex:1}
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .footer-grid{grid-template-columns:1fr 1fr}
     .footer-brand{grid-column:1 / -1}
   }
@@ -748,6 +783,8 @@ const PAGE_TITLE = (function () {
     .stage:not(.full){border-radius:14px}
     .play-btn{width:72px;height:72px}
     .play-btn::after{border-left-width:22px;border-top-width:13px;border-bottom-width:13px;margin-left:5px}
+    .grid{gap:12px}
+    .card h3{font-size:14px}
     .footer-col a,.footer-col button{padding:12px 0}
     .site-footer{padding-bottom:calc(28px + env(safe-area-inset-bottom))}
     .ad-slot[data-ph]{min-height:50px}
@@ -813,14 +850,15 @@ const PAGE_TITLE = (function () {
   </section>
 
   <div class="wrap">
-    <!-- ============ AREA STREAMING ============
-         Warna / gambar background area ini diatur di SITE.theme.stage -->
+    <!-- ============ AREA VIDEO (GAMBAR) ============
+         Gambar diatur di SITE.video.image — ukuran pas 1280 × 720 px.
+         Background di sekeliling area ini diatur di SITE.theme.stage -->
     <div class="stage" id="stage">
       <div class="player" id="player"></div>
     </div>
     <p class="sr-only" id="playerStatus" role="status" aria-live="polite"></p>
 
-    <div class="about">
+    <div class="about" id="aboutBox">
       <p id="videoDesc"></p>
     </div>
 
@@ -832,7 +870,8 @@ const PAGE_TITLE = (function () {
     </div>
   </div>
 
-  <!-- ============ VIDEO LAINNYA ============ -->
+  <!-- ============ MORE VIDEOS (4 KOTAK GAMBAR) ============
+       Gambar & link tiap kotak diatur di SITE.more.items — ukuran pas 640 × 360 px. -->
   <section class="wrap more" id="video-lain" aria-labelledby="moreTitle">
     <h2 id="moreTitle">More videos</h2>
     <ul class="grid" id="grid"></ul>
@@ -882,16 +921,17 @@ const PAGE_TITLE = (function () {
 <script>
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const cssUrl = (u) => 'url("' + String(u).replace(/"/g, "%22") + '")';
 
 const player = $("#player");
 const grid = $("#grid");
-let current = 0;
 let state = "idle";     // idle | loading | done
 let raf = 0;
 
 /* ---------- Header: nama, menu, tombol ---------- */
-document.title = PAGE_TITLE || SITE.name;
+document.title = PAGE_TITLE || (v.title + " — " + SITE.name);
 $("#logoText").textContent = SITE.name;
+$(".logo").setAttribute("href", SITE.logoHref || "#");
 
 function linkAttrs(item) {
   if (item.article) return `href="#" data-article="${esc(item.article)}"`;
@@ -912,7 +952,7 @@ $("#nav").innerHTML =
 (function applyTheme(){
   const t = SITE.theme || {};
   const root = document.documentElement.style;
-  const url = (u) => u ? 'url("' + String(u).replace(/"/g, "%22") + '")' : "none";
+  const url = (u) => u ? cssUrl(u) : "none";
   const num = (v) => Math.min(1, Math.max(0, Number(v) || 0));
 
   const c = t.colors || {};
@@ -962,7 +1002,7 @@ if (/(^|[?&])sizes(=|&|$)/.test(location.search)) {
   const box = document.createElement("div");
   box.style.cssText =
     "position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:3000;" +
-    "max-width:420px;margin:0 auto;padding:12px 14px;border-radius:12px;" +
+    "max-width:420px;max-height:70vh;overflow:auto;margin:0 auto;padding:12px 14px;border-radius:12px;" +
     "background:rgba(7,10,18,.94);border:1px solid rgba(0,212,255,.45);color:#EAF2FF;" +
     "font:12px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:0 12px 40px rgba(0,0,0,.6)";
   document.body.appendChild(box);
@@ -970,6 +1010,9 @@ if (/(^|[?&])sizes(=|&|$)/.test(location.search)) {
     const dpr = window.devicePixelRatio || 1;
     const w = innerWidth, h = innerHeight;
     const st = $("#stage").getBoundingClientRect();
+    const pl = $("#player").getBoundingClientRect();
+    const tl = document.querySelector("#grid .thumb");
+    const tr = tl ? tl.getBoundingClientRect() : null;
     const r = (n) => Math.round(n / 2) * 2;
     const mobileNow = w <= SITE.ads.mobileBreakpoint;
     const bannerNow = (SITE.ads.banner.sizes || []).filter((v) =>
@@ -980,6 +1023,13 @@ if (/(^|[?&])sizes(=|&|$)/.test(location.search)) {
       (mobileNow ? "HP" : "desktop") + "<br><br>" +
       "<b>Background halaman</b><br>pas di layar ini: " + r(w * dpr) + " × " + r(h * dpr) + " px<br>" +
       "aman semua perangkat: 1920 × 1280 px<br><br>" +
+      "<b>Gambar area video</b><br>area sekarang: " + Math.round(pl.width) + " × " + Math.round(pl.height) + " px<br>" +
+      "pas di layar ini: " + r(pl.width * dpr) + " × " + r(pl.height * dpr) + " px<br>" +
+      "aman (16:9): 1280 × 720 px &nbsp;| tajam: 1920 × 1080 px<br><br>" +
+      "<b>Gambar kotak More videos</b><br>" +
+      (tr ? "kotak sekarang: " + Math.round(tr.width) + " × " + Math.round(tr.height) + " px<br>" +
+            "pas di layar ini: " + r(tr.width * dpr) + " × " + r(tr.height * dpr) + " px<br>" : "") +
+      "aman (16:9): 640 × 360 px &nbsp;| tajam: 1280 × 720 px<br><br>" +
       "<b>Background area streaming</b><br>area sekarang: " + Math.round(st.width) + " × " + Math.round(st.height) + " px<br>" +
       "pas di layar ini: " + r(st.width * dpr) + " × " + r(st.height * dpr) + " px<br>" +
       "aman (16:9): 1280 × 720 px<br><br>" +
@@ -988,6 +1038,7 @@ if (/(^|[?&])sizes(=|&|$)/.test(location.search)) {
       "<span style='color:#93A0BC'>Panel ini hanya muncul saat ada ?sizes=1 di link.</span>";
   };
   draw();
+  addEventListener("load", draw);
   addEventListener("resize", draw);
   addEventListener("orientationchange", () => setTimeout(draw, 300));
 }
@@ -1164,6 +1215,16 @@ bannerMQ.addEventListener("change", renderBanner);   // HP diputar → pilih ula
     return;
   }
   activeAds.add("native");
+  const nc = SITE.ads.native;
+  const fitNative = () => {                       // batas ukuran dari SITE.ads.native
+    const mob = bannerMQ.matches;
+    const mw = Number(mob ? nc.maxWidthMobile : nc.maxWidth) || 0;
+    const mh = Number(mob ? nc.maxHeightMobile : nc.maxHeight) || 0;
+    slot.style.maxWidth  = mw ? mw + "px" : "";
+    slot.style.maxHeight = mh ? mh + "px" : "";
+  };
+  fitNative();
+  bannerMQ.addEventListener("change", fitNative);
   whenLoaded(() => injectCode(slot, code, "native banner"));
 })();
 
@@ -1225,10 +1286,11 @@ document.addEventListener("click", (e) => {
   openModal($("#articleModal"));
 });
 
-/* ---------- Player ---------- */
+/* ---------- Area video (gambar + tombol play) ---------- */
 const RING_R = 54, RING_C = 2 * Math.PI * RING_R;
-const thumbUrl = (v) => v.thumb || `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`;
-const watchUrl = (v) => v.link || `https://www.youtube.com/watch?v=${v.id}`;
+/* gambar area video: pakai SITE.video.image; kalau kosong, pakai sampul YouTube dari id */
+const posterUrl = (v) => v.image || (v.id ? `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg` : "");
+const watchUrl  = (v) => v.link  || (v.id ? `https://www.youtube.com/watch?v=${v.id}` : "#");
 
 function showPoster(v) {
   cancelAnimationFrame(raf);
@@ -1240,7 +1302,8 @@ function showPoster(v) {
   b.className = "poster";
   b.type = "button";
   b.setAttribute("aria-label", "Play: " + v.title);
-  b.style.backgroundImage = `url("${thumbUrl(v)}")`;
+  const img = posterUrl(v);
+  if (img) b.style.backgroundImage = cssUrl(img);
   b.innerHTML =
     `<span class="play-btn">` +
     `<svg class="ring" viewBox="0 0 120 120" aria-hidden="true">` +
@@ -1271,9 +1334,9 @@ function startLoading() {
 
 function finishLoading() {
   state = "done";
-  const v = SITE.videos[current];
+  const v = SITE.video;
   $("#playerStatus").textContent = "Your video is ready.";
-  if (SITE.afterLoading === "embed") { showIframe(v); return; }
+  if (SITE.afterLoading === "embed" && v.id) { showIframe(v); return; }
   $("#watchTitle").textContent = SITE.watch.title;
   const btn = $("#watchBtn");
   btn.textContent = SITE.watch.button;
@@ -1283,7 +1346,7 @@ function finishLoading() {
   openModal($("#watchModal"));
 }
 
-function resetPlayer() { showPoster(SITE.videos[current]); }
+function resetPlayer() { showPoster(SITE.video); }
 
 function showIframe(v) {
   player.classList.remove("loading");
@@ -1297,38 +1360,58 @@ function showIframe(v) {
   player.appendChild(f);
 }
 
-function select(i) {
-  current = i;
-  const v = SITE.videos[i];
-  $("#videoTitle").textContent = v.title;
-  $("#videoMeta").textContent = v.channel;
-  $("#videoDesc").textContent = v.desc;
+function initVideo() {
+  const v = SITE.video;
+  $("#videoTitle").textContent = v.title || "";
+  $("#videoMeta").textContent = v.channel || "";
+  $("#videoDesc").textContent = v.desc || "";
+  $("#aboutBox").hidden = !v.desc;
   $("#liveBadge").hidden = !v.live;
-  document.title = PAGE_TITLE || (v.title + " — " + SITE.name);
-  grid.querySelectorAll(".card").forEach((c, idx) => {
-    if (idx === i) c.setAttribute("aria-current", "true");
-    else c.removeAttribute("aria-current");
-  });
+  document.title = (v.title ? v.title + " — " : "") + SITE.name;
   showPoster(v);
-  history.replaceState(null, "", "#v=" + v.id);
 }
 
+/* ---------- More videos: 4 kotak gambar yang bisa diklik ---------- */
 function buildGrid() {
-  SITE.videos.forEach((v, i) => {
+  const cfg = SITE.more || {};
+  $("#moreTitle").textContent = cfg.title || "More videos";
+  (cfg.items || []).slice(0, 4).forEach((it, i) => {
+    const url = String(it.url || "").trim();
+    const real = url !== "" && url !== "#";
+
     const li = document.createElement("li");
-    li.innerHTML =
-      `<button class="card" type="button">` +
-      `<div class="thumb" style="background-image:url('${esc(thumbUrl(v))}')">${v.live ? '<span class="tag">LIVE</span>' : ""}</div>` +
-      `<h3></h3><small></small></button>`;
-    li.querySelector("h3").textContent = v.title;
-    li.querySelector("small").textContent = v.channel;
-    li.querySelector(".card").addEventListener("click", () => {
-      select(i);
-      $("#tonton").scrollIntoView({ behavior: "smooth", block: "start" });
-      startLoading();
-    });
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = real ? url : "#";
+    a.setAttribute("aria-label", it.title || ("Video " + (i + 1)));
+    if (real && it.newTab) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+    if (!real) a.addEventListener("click", (e) => e.preventDefault());   // url kosong = tidak membuka apa-apa
+
+    const th = document.createElement("div");
+    th.className = "thumb" + (it.image ? "" : " empty");
+    if (it.image) th.style.backgroundImage = cssUrl(it.image);
+    if (it.live) {
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = "LIVE";
+      th.appendChild(tag);
+    }
+    a.appendChild(th);
+
+    if (it.title) {
+      const h = document.createElement("h3");
+      h.textContent = it.title;
+      a.appendChild(h);
+    }
+    if (it.channel) {
+      const s = document.createElement("small");
+      s.textContent = it.channel;
+      a.appendChild(s);
+    }
+    li.appendChild(a);
     grid.appendChild(li);
   });
+  $("#video-lain").hidden = !grid.children.length;
 }
 
 /* ---------- Menu mobile ---------- */
@@ -1346,9 +1429,7 @@ nav.addEventListener("click", (e) => { if (e.target.closest("a")) closeMenu(); }
 
 /* ---------- Mulai ---------- */
 buildGrid();
-const m = location.hash.match(/v=([\w-]{11})/);
-const startIdx = m ? Math.max(0, SITE.videos.findIndex((v) => v.id === m[1])) : 0;
-select(startIdx);
+initVideo();
 if (SITE.autoStartLoading) startLoading();
 </script>
 </body>
