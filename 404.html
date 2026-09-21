@@ -932,7 +932,7 @@ let state = "idle";     // idle | loading | done
 let raf = 0;
 
 /* ---------- Header: nama, menu, tombol ---------- */
-document.title = PAGE_TITLE || SITE.name;
+document.title = PAGE_TITLE_CAP || SITE.name;
 $("#logoText").textContent = SITE.name;
 $(".logo").setAttribute("href", SITE.logoHref || "#");
 
@@ -1365,12 +1365,12 @@ function showIframe(v) {
 
 function initVideo() {
   const v = SITE.video;
-  $("#videoTitle").textContent = PAGE_TITLE || v.title || "";
+  $("#videoTitle").textContent = PAGE_TITLE_CAP || v.title || "";
   $("#videoMeta").textContent = v.channel || "";
   $("#videoDesc").textContent = v.desc || "";
   $("#aboutBox").hidden = !v.desc;
   $("#liveBadge").hidden = !v.live;
-  document.title = PAGE_TITLE || ((v.title ? v.title + " — " : "") + SITE.name);
+  document.title = PAGE_TITLE_CAP || ((v.title ? v.title + " — " : "") + SITE.name);
   showPoster(v);
 }
 
