@@ -388,7 +388,7 @@ const SITE = {
   return p.replace(/[-_]+/g, " ").trim(); // dash/underscore → spasi
 })();
    const PAGE_TITLE_CAP = PAGE_TITLE
-  ? PAGE_TITLE.replace(/\b\w/g, (c) => c.toUpperCase())
+  ? PAGE_TITLE.toUpperCase()
   : "";
 </script>
 
