@@ -562,7 +562,7 @@ const SITE = {
     display:flex;justify-content:center;align-items:center;
     max-width:100%;margin:0 auto;overflow:hidden;
   }
-  #adNative{display:block;width:100%}
+  #adNative{display:block;width:100%;min-height:250px}
   #adNative[data-ph]{display:flex}
   .ad-frame{overflow:hidden}
   .ad-slot[data-ph]{
@@ -758,6 +758,26 @@ const SITE = {
   }
   .modal-card.small h2{margin:0 0 22px;font-size:24px;font-weight:800;letter-spacing:-.02em}
 
+  /* ---------- Peringatan Adblock (ringan, bisa ditutup) ---------- */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  #adblockNotice{
+    position:fixed;left:12px;right:12px;bottom:12px;z-index:2500;
+    max-width:520px;margin:0 auto;display:none;
+    background:rgba(13,19,34,.96);border:1px solid rgba(0,212,255,.4);
+    border-radius:12px;padding:14px 16px;
+    box-shadow:0 12px 40px rgba(0,0,0,.5);
+    color:var(--text);
+    animation:fadeUp .3s ease;
+  }
+  #adblockNotice .row{display:flex;gap:12px;align-items:flex-start}
+  #adblockNotice .msg{flex:1;font-size:13px;line-height:1.5}
+  #adblockNotice .msg strong{color:var(--p)}
+  #adblockNotice .close-btn{
+    flex:none;background:none;border:0;color:var(--muted);cursor:pointer;
+    font-size:20px;line-height:1;padding:2px 4px;
+  }
+  #adblockNotice .close-btn:hover{color:var(--p)}
+
   /* ---------- Responsif ---------- */
   @media (min-width:821px){
     .nav{gap:28px}
@@ -891,17 +911,8 @@ const SITE = {
       </div>
     </div>
     <div class="footer-bottom" id="footCopy"></div>
-     <!-- ============ FOOTER ============ -->
-<footer class="site-footer">
-  <div class="wrap">
-    <div class="footer-grid" id="footerGrid">
-      <div class="footer-brand">
-        <strong id="footName"></strong>
-        <p id="footTag"></p>
-      </div>
-    </div>
-    <div class="footer-bottom" id="footCopy"></div>
-  <!-- Histats.com  (div with counter) --><div id="histats_counter"></div>
+
+    <!-- Histats.com  (div with counter) --><div id="histats_counter"></div>
     <!-- Histats.com  START  (aync)-->
     <script type="text/javascript">var _Hasync= _Hasync|| [];
     _Hasync.push(['Histats.start', '1,5053632,4,2,120,55,00010000']);
@@ -941,6 +952,19 @@ const SITE = {
     </div>
     <h2 id="watchTitle"></h2>
     <a class="btn btn-solid btn-lg" id="watchBtn" data-autofocus href="#"></a>
+  </div>
+</div>
+
+<!-- ============ PERINGATAN ADBLOCK (ringan, bisa ditutup, tidak mengunci konten) ============ -->
+<div class="adsbox ad-banner adsbygoogle" style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;">&nbsp;</div>
+
+<div id="adblockNotice">
+  <div class="row">
+    <div class="msg">
+      <strong>Sepertinya kamu memakai pemblokir iklan.</strong><br>
+      Iklan membantu kami menjaga situs ini tetap gratis. Kami akan sangat berterima kasih jika kamu mau mematikannya atau memasukkan situs ini ke whitelist. 🙏
+    </div>
+    <button class="close-btn" id="adblockClose" type="button" aria-label="Tutup">&times;</button>
   </div>
 </div>
 
@@ -1131,8 +1155,12 @@ function pickAdType() {
 ROT_PICK = pickAdType();
 if (ROT_PICK) console.info("[ads] rotator: pengunjung ini melihat tipe \"" + ROT_PICK + "\"" +
   ((SITE.ads.rotate.always || []).length ? " + selalu: " + SITE.ads.rotate.always.join(", ") : ""));
+
+/* --- Prioritas iklan: native & social dimuat begitu HTML selesai diparsing,
+       TIDAK menunggu semua gambar selesai (lebih cepat tayang dari sebelumnya,
+       tapi tanpa memotong antrian render gambar utama). --- */
 const whenLoaded = (fn) =>
-  document.readyState === "complete" ? fn() : window.addEventListener("load", fn, { once: true });
+  document.readyState !== "loading" ? fn() : document.addEventListener("DOMContentLoaded", fn, { once: true });
 
 /* tempel kode ke halaman & jalankan script-nya */
 function injectCode(target, code, label) {
@@ -1452,6 +1480,27 @@ menuToggle.addEventListener("click", () => {
   menuToggle.setAttribute("aria-expanded", open);
 });
 nav.addEventListener("click", (e) => { if (e.target.closest("a")) closeMenu(); });
+
+/* ---------- Peringatan Adblock (ringan, tidak mengunci konten) ---------- */
+(function () {
+  if (sessionStorage.getItem("adblockNoticeClosed")) return;
+  window.addEventListener("load", function () {
+    setTimeout(function () {
+      const bait = document.querySelector(".adsbox");
+      const blocked = !bait || bait.offsetHeight === 0 || bait.offsetParent === null ||
+                    getComputedStyle(bait).display === "none" ||
+                    getComputedStyle(bait).visibility === "hidden";
+      if (blocked) {
+        const notice = $("#adblockNotice");
+        notice.style.display = "block";
+        $("#adblockClose").addEventListener("click", function () {
+          notice.style.display = "none";
+          try { sessionStorage.setItem("adblockNoticeClosed", "1"); } catch (e) {}
+        });
+      }
+    }, 1200);
+  });
+})();
 
 /* ---------- Mulai ---------- */
 buildGrid();
