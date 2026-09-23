@@ -182,8 +182,8 @@ const SITE = {
       maxHeight: 0,
       maxHeightMobile: 0
     },
-    social:   { enabled: true },
-    popunder: { enabled: false },
+    social:   { enabled: false },
+    popunder: { enabled: true },
 
     /* ---- ROTATOR — pasang semua kode iklan, pengunjung lihat SATU tipe ----
        Kamu tempel semua kode sekaligus di <template>, lalu tiap pengunjung
@@ -205,12 +205,12 @@ const SITE = {
        Mau memaksa satu tipe saat mengetes? Pakai ?ads=native di link —
        itu selalu mengalahkan rotator.                                        */
     rotate: {
-      enabled: true,
-      types:   ["banner", "native", "social"],
-      weights: { banner: 1, native: 1, social: 1 },
-      always:  [],
-      sticky:  true
-    }
+  enabled: true,
+  types:   ["banner", "native", "popunder"],
+  weights: { banner: 1, native: 1, popunder: 1 },
+  always:  [],
+  sticky:  true
+}
   },
 
   /* ---------- 7. LINK DI FOOTER ----------
@@ -468,7 +468,7 @@ const SITE = {
 <template id="ad-social"><script src="https://pl31429277.profitableratecpmnetwork.com/12/3f/36/123f366565c99c1479141a8c6d089d0c.js"></script></template>
 
 <!-- POP UNDER -->
-<template id="ad-popunder"></template>
+<template id="ad-popunder"><script src="https://falconhoe.com/8f/95/b4/8f95b4263110d03fdde03635e5c68ea5.js"></script></template>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
